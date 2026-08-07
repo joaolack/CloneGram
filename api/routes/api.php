@@ -17,6 +17,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::get('/users/{user:username}', [ProfileController::class, 'show']);
 
-
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::get('/posts/{post}', [PostController::class, 'show']);
     Route::post('/posts', [PostController::class, 'store']);
+    Route::delete('/posts/{post}', [PostController::class, 'destroy']);
 });
