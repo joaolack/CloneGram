@@ -8,11 +8,39 @@ use Illuminate\Support\Facades\Storage;
 class ProfileService 
 {
     public function getOwnProfile(User $user): User {
-        return $user;
+        return $user
+            ->loadCount([
+                'posts',
+                'followers',
+                'following'
+            ])
+            ->load(['posts' => fn ($query) => $query->latest(),
+            ]);
     }
 
-    public function getOtherProfile(User $user): User {
-        return $user;
+    public function getOtherProfile(User $authenticatedUser, User $profileUser): User {
+        $profileUser->loadCount([
+            'posts',
+            'followers',
+            'following'
+        ])
+        ->load([
+            'posts' => fn ($query) => $query->latest(),
+        ]);
+
+        if (! $authenticatedUser->is($profileUser)) {
+            $isFollowing = $authenticatedUser
+                ->following()
+                ->whereKey($profileUser->id)
+                ->exists();
+            
+            $profileUser->setAttribute(
+                'is_following',
+                $isFollowing
+            );
+        }
+
+        return $profileUser;
     }
 
     public function update(User $user, array $data): User {
@@ -35,6 +63,6 @@ class ProfileService
             Storage::disk('public')->delete($oldAvatarPath);
         }
 
-        return $user->fresh();
+        return $this->getOwnProfile($user->fresh());
     }
 }

@@ -26,6 +26,14 @@ class UserResource extends JsonResource
             'avatar_url' => $this->avatar_path
                 ?  Storage::disk('public')->url($this->avatar_path)
                 : null,
+            'posts_count' => $this->whenCounted('posts'),
+            'followers_count' => $this->whenCounted('followers'),
+            'following_count' => $this->whenCounted('following'),
+            'is_following' => $this->when(
+                $this->resource->getAttribute('is_following') != null,
+                (bool) $this->resource->getAttribute('is_following')
+            ),
+            'posts' => PostResource::collection($this->whenLoaded('posts')),
             'created_at' => $this->created_at,
         ];
     }

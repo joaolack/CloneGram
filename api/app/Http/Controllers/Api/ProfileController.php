@@ -21,8 +21,8 @@ class ProfileController extends Controller
         return new UserResource($user);
     }
 
-    public function show(User $user): UserResource {
-        $user = $this->profileService->getOtherProfile($user);
+    public function show(Request $request, User $user): UserResource {
+        $user = $this->profileService->getOtherProfile($request->user(), $user);
 
         return new UserResource($user);
     }
