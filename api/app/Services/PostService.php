@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Storage;
 class PostService 
 {
 
-    public function paginate(): LengthAwarePaginator {
+    public function paginate(User $user): LengthAwarePaginator {
         return Post::query()
             ->with('user')
+            ->withCount('likedBy')
+            ->withExists(['likedBy as liked_by_me' => fn ($query) => $query->whereKey($user->id),
+            ])
             ->latest()
             ->paginate(12);
     }
@@ -35,8 +38,19 @@ class PostService
         return $post->load('user');
     }
 
-    public function get(Post $post): Post {
-        return $post->load('user');
+    public function get(Post $post, User $user): Post {
+        $post->load('user');
+
+        $post->loadCount('likedBy');
+
+        $likedByMe = $post
+            ->likedBy()
+            ->whereKey($user->id)
+            ->exists();
+
+        $post->setAttribute('liked_by_me', $likedByMe);
+
+        return $post;
     }
 
     public function delete(Post $post): void {

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Resources\PostResource;
 use App\Services\PostService;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -16,8 +17,8 @@ class PostController extends Controller
     ) {}
 
 
-    public function index() {
-        $posts = $this->postService->paginate();
+    public function index(Request $request) {
+        $posts = $this->postService->paginate($request->user());
 
         return PostResource::collection($posts);
     }
@@ -34,8 +35,8 @@ class PostController extends Controller
             ->setStatusCode(201);
     }
 
-    public function show(Post $post): PostResource {
-        $post = $this->postService->get($post);
+    public function show(Request $request, Post $post): PostResource {
+        $post = $this->postService->get($post, $request->user());
 
         return new PostResource($post);
     }
