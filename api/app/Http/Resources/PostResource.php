@@ -22,9 +22,13 @@ class PostResource extends JsonResource
             'media_type' => $this->media_type,
             'author' => new UserResource($this->whenLoaded('user')),
             'likes_count' => $this->whenCounted('likedBy'),
+            'comments_count' => $this->whenCounted('comments'),
             'liked_by_me' => $this->when(
                 $this->resource->getAttribute('liked_by_me') !== null,
                 (bool) $this->resource->getAttribute('liked_by_me')
+            ),
+            'comments' => CommentResource::collection(
+                $this->whenLoaded('comments')
             ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

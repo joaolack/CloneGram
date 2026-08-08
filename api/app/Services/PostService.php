@@ -13,7 +13,7 @@ class PostService
     public function paginate(User $user): LengthAwarePaginator {
         return Post::query()
             ->with('user')
-            ->withCount('likedBy')
+            ->withCount(['likedBy', 'comments',])
             ->withExists(['likedBy as liked_by_me' => fn ($query) => $query->whereKey($user->id),
             ])
             ->latest()
@@ -39,9 +39,9 @@ class PostService
     }
 
     public function get(Post $post, User $user): Post {
-        $post->load('user');
+        $post->load(['user', 'comments.user']);
 
-        $post->loadCount('likedBy');
+        $post->loadCount(['likedBy', 'comments',]);
 
         $likedByMe = $post
             ->likedBy()
