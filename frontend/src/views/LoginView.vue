@@ -64,5 +64,8 @@ async function login() {
                 {{ auth.loading ? 'Entrando...' : 'Entrar'}}
             </button>
         </form>
+        <RouterLink to="/register">
+            Não possui conta? Cadastre-se
+        </RouterLink>
     </main>
 </template>

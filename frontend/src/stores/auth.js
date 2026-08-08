@@ -30,14 +30,42 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async register(data) {
+      this.loading = true
+
+      try {
+        const response = await api.post('/register', data)
+
+        this.token = response.data.token
+        this.user = response.data.user
+
+        localStorage.setItem('token', this.token)
+
+        return response.data
+      } finally {
+        this.loading = false
+      }
+    },
+
     async fetchUser() {
       if (!this.token) {
         return
       }
 
-      const response = await api.get('/me')
+      try {
+        const response = await api.get('/me')
 
-      this.user = response.data.data ?? response.data
+        this.user = response.data.data ?? response.data
+      } catch (error) {
+        if (error.response?.status === 401) {
+          this.user = null
+          this.token = null
+
+          localStorage.removeItem('token')
+        }
+
+        throw error
+      }
     },
 
     async logout() {
