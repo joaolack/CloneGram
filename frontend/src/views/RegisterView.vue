@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth';
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -11,6 +12,8 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
+const showPassword = ref(false)
+const showPasswordConfirmation = ref(false)
 
 const error = ref('')
 const validationErrors = ref({})
@@ -194,28 +197,61 @@ async function register() {
 
           <!-- Senha -->
           <div>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="Senha"
-              required
-              class="
-                w-full
-                rounded-md
-                border
-                border-gray-300
-                bg-gray-50
-                px-4
-                py-3
-                text-sm
-                outline-none
-                transition
-                focus:border-gray-500
-                focus:bg-white
-                focus:ring-1
-                focus:ring-gray-400
-              "
-            />
+            <div class="relative">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Senha"
+                required
+                class="
+                  w-full
+                  rounded-md
+                  border
+                  border-gray-300
+                  bg-gray-50
+                  px-4
+                  py-3
+                  pr-12
+                  text-sm
+                  outline-none
+                  transition
+                  focus:border-gray-500
+                  focus:bg-white
+                  focus:ring-1
+                  focus:ring-gray-400
+                "
+              />
+
+              <button
+                type="button"
+                :aria-label="showPassword ? 'Ocultar senha' : 'Ver senha'"
+                class="
+                  absolute
+                  inset-y-0
+                  right-0
+                  flex
+                  w-12
+                  items-center
+                  justify-center
+                  text-gray-400
+                  transition
+                  hover:text-gray-700
+                "
+                @click="showPassword = !showPassword"
+              >
+                <EyeOff
+                  v-if="showPassword"
+                  class="h-5 w-5"
+                  :stroke-width="1.8"
+                />
+
+                <Eye
+                  v-else
+                  class="h-5 w-5"
+                  :stroke-width="1.8"
+                />
+              </button>
+            </div>
 
             <p
               v-if="validationErrors.password"
@@ -226,10 +262,10 @@ async function register() {
           </div>
 
           <!-- Confirmar senha -->
-          <div>
+          <div class="relative">
             <input
               v-model="passwordConfirmation"
-              type="password"
+              :type="showPasswordConfirmation ? 'text' : 'password'"
               placeholder="Confirme sua senha"
               required
               class="
@@ -240,6 +276,7 @@ async function register() {
                 bg-gray-50
                 px-4
                 py-3
+                pr-12
                 text-sm
                 outline-none
                 transition
@@ -249,6 +286,43 @@ async function register() {
                 focus:ring-gray-400
               "
             />
+
+            <button
+              type="button"
+              :aria-label="
+                showPasswordConfirmation
+                  ? 'Ocultar confirmação de senha'
+                  : 'Ver confirmação de senha'
+              "
+              class="
+                absolute
+                inset-y-0
+                right-0
+                flex
+                w-12
+                items-center
+                justify-center
+                text-gray-400
+                transition
+                hover:text-gray-700
+              "
+              @click="
+                showPasswordConfirmation =
+                  !showPasswordConfirmation
+              "
+            >
+              <EyeOff
+                v-if="showPasswordConfirmation"
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+
+              <Eye
+                v-else
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+            </button>
           </div>
 
           <p

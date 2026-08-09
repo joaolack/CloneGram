@@ -2,12 +2,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 const router = useRouter()
 const auth = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)
 const error = ref('')
 
 async function login() {
@@ -65,7 +67,6 @@ async function login() {
           class="space-y-3"
           @submit.prevent="login"
         >
-          <!-- E-mail -->
           <div>
             <input
               v-model="email"
@@ -94,10 +95,10 @@ async function login() {
           </div>
 
           <!-- Senha -->
-          <div>
+          <div class="relative">
             <input
               v-model="password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               placeholder="Senha"
               required
               class="
@@ -108,6 +109,7 @@ async function login() {
                 bg-gray-50
                 px-4
                 py-3
+                pr-12
                 text-sm
                 text-gray-900
                 outline-none
@@ -119,6 +121,36 @@ async function login() {
                 focus:ring-gray-400
               "
             />
+
+            <button
+              type="button"
+              :aria-label="showPassword ? 'Ocultar senha' : 'Ver senha'"
+              class="
+                absolute
+                inset-y-0
+                right-0
+                flex
+                w-12
+                items-center
+                justify-center
+                text-gray-400
+                transition
+                hover:text-gray-700
+              "
+              @click="showPassword = !showPassword"
+            >
+              <EyeOff
+                v-if="showPassword"
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+
+              <Eye
+                v-else
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+            </button>
           </div>
 
           <!-- Erro -->

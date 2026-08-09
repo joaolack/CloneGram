@@ -251,16 +251,12 @@ watch(
       lg:px-8
     "
   >
-    <!-- Loading -->
     <div
       v-if="loading"
       class="
         flex
         min-h-[60vh]
-        items-center
-        justify-center
-      "
-    >
+        items-center justify-center">
       <div
         class="
           h-9
@@ -274,7 +270,6 @@ watch(
       />
     </div>
 
-    <!-- Erro -->
     <div
       v-else-if="error"
       class="
@@ -294,7 +289,6 @@ watch(
     </div>
 
     <template v-else-if="profile">
-      <!-- Cabeçalho do perfil -->
       <section
         class="
           grid
@@ -310,7 +304,6 @@ watch(
           md:px-8
         "
       >
-        <!-- Avatar -->
         <div
           class="
             flex
@@ -360,9 +353,7 @@ watch(
           </div>
         </div>
 
-        <!-- Informações -->
         <div class="min-w-0">
-          <!-- Username + ação -->
           <div
             class="
               mb-5
@@ -386,7 +377,6 @@ watch(
               {{ profile.username }}
             </h1>
 
-            <!-- Meu perfil -->
             <button
               v-if="isOwnProfile"
               type="button"
@@ -406,7 +396,6 @@ watch(
               Editar perfil
             </button>
 
-            <!-- Perfil alheio -->
             <button
               v-else
               type="button"
@@ -442,7 +431,6 @@ watch(
             </button>
           </div>
 
-          <!-- Estatísticas desktop -->
           <div
             class="
               mb-5
@@ -476,7 +464,6 @@ watch(
             </span>
           </div>
 
-          <!-- Nome e bio -->
           <div class="text-sm text-gray-900">
             <p class="font-semibold">
               {{ profile.name }}
@@ -497,7 +484,6 @@ watch(
         </div>
       </section>
 
-      <!-- Estatísticas mobile -->
       <section
         class="
           grid
@@ -540,7 +526,6 @@ watch(
         </div>
       </section>
 
-      <!-- Título dos posts -->
       <div
         class="
           flex
@@ -567,7 +552,6 @@ watch(
         </div>
       </div>
 
-      <!-- Grid -->
       <section class="mt-1">
         <div
           v-if="posts.length"
@@ -619,7 +603,6 @@ watch(
                 "
               />
 
-              <!-- Overlay -->
               <div
                 class="
                   absolute
@@ -646,7 +629,6 @@ watch(
               </div>
             </RouterLink>
 
-            <!-- Excluir -->
             <button
               v-if="isOwnProfile"
               type="button"
@@ -681,7 +663,6 @@ watch(
           </article>
         </div>
 
-        <!-- Nenhuma publicação -->
         <div
           v-else
           class="
@@ -751,7 +732,6 @@ watch(
         </div>
       </section>
 
-      <!-- Modal de edição -->
       <div
         v-if="editing"
         class="
@@ -778,7 +758,6 @@ watch(
             shadow-2xl
           "
         >
-          <!-- Cabeçalho modal -->
           <header
             class="
               flex
@@ -818,7 +797,6 @@ watch(
             class="space-y-5 p-6"
             @submit.prevent="updateProfile"
           >
-            <!-- Avatar -->
             <div
               class="
                 flex
@@ -913,7 +891,6 @@ watch(
               {{ validationErrors.avatar[0] }}
             </p>
 
-            <!-- Nome -->
             <div>
               <label
                 for="name"
@@ -956,7 +933,6 @@ watch(
               </p>
             </div>
 
-            <!-- Username -->
             <div>
               <label
                 for="username"
@@ -999,7 +975,6 @@ watch(
               </p>
             </div>
 
-            <!-- Bio -->
             <div>
               <label
                 for="bio"
@@ -1036,7 +1011,6 @@ watch(
               />
             </div>
 
-            <!-- Erro -->
             <p
               v-if="updateError"
               class="
@@ -1050,7 +1024,6 @@ watch(
               {{ updateError }}
             </p>
 
-            <!-- Botões -->
             <div
               class="
                 flex

@@ -48,6 +48,7 @@ async function logout() {
       flex
       h-16
       items-center
+      justify-center
       gap-4
       border-b
       border-gray-200
@@ -62,29 +63,6 @@ async function logout() {
     >
       <strong>CloneGram</strong>
     </RouterLink>
-    <RouterLink
-      to="/search"
-      class="
-        ml-auto
-        flex
-        h-10
-        min-w-0
-        max-w-[190px]
-        flex-1
-        items-center
-        gap-2
-        rounded-full
-        bg-gray-100
-        px-4
-        text-sm
-        text-gray-500
-      "
-    >
-      <Search class="h-4 w-4 shrink-0" />
-      <span class="truncate">Pesquisar</span>
-    </RouterLink>
-
-
   </header>
 
   <aside
