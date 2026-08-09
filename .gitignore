@@ -1,0 +1,76 @@
+# =========================
+# Variáveis de ambiente
+# =========================
+
+.env
+.env.local
+.env.production
+.env.testing
+
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.testing
+
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# NÃO ignorar .env.example
+
+
+# =========================
+# Laravel / PHP
+# =========================
+
+backend/vendor/
+
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+
+backend/bootstrap/cache/*.php
+
+backend/.phpunit.result.cache
+backend/phpunit.xml
+
+
+# =========================
+# Vue / Node
+# =========================
+
+frontend/node_modules/
+frontend/dist/
+
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+
+# =========================
+# IDE / Editores
+# =========================
+
+.vscode/
+.idea/
+
+*.swp
+*.swo
+
+
+# =========================
+# Sistema operacional
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# =========================
+# Docker
+# =========================
+
+*.pid

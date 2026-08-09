@@ -55,18 +55,10 @@ async function login() {
           py-10
         "
       >
-        <!-- Logo -->
+        
         <h1
-          class="
-            text-center
-            text-4xl
-            font-bold
-            tracking-tight
-            text-gray-900
-            mb-10
-          "
-        >
-          Instagram Clone
+          class="text-center text-4xl font-bold tracking-tight text-gray-900 mb-10">
+          CloneGram
         </h1>
 
         <form

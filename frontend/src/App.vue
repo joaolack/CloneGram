@@ -11,8 +11,10 @@ const showNavbar = computed(() => {
 
 </script>
 <template>
-  <NavBar v-if="showNavbar"/>
+  <div :class="{'min-h-screen bg-gray-50 md:pl-64': showNavbar}">
+    <NavBar v-if="showNavbar"/>
 
-  <RouterView />
+    <RouterView />
+  </div>  
 </template>
 <style scoped></style>
