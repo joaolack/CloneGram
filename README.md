@@ -2,13 +2,49 @@
 
 Aplicação web inspirada no Instagram, desenvolvida como projeto final do curso.
 
-O sistema permite cadastro e autenticação de usuários, edição de perfil, publicação de imagens e vídeos, curtidas, comentários, busca de usuários e sistema de seguidores.
+O projeto possui uma **API REST em Laravel** e um **frontend em Vue.js**, permitindo interação entre usuários por meio de publicações, curtidas, comentários e seguidores.
 
-O backend foi desenvolvido como uma API REST utilizando Laravel e organizado no padrão MSC (Model–Service–Controller). O frontend foi desenvolvido com Vue.js e consome a API através do Axios.
+Todo o ambiente pode ser executado com Docker através de um único arquivo `compose.yaml` localizado na raiz do projeto.
 
-## Tecnologias
+---
 
-### Backend
+## Funcionalidades
+
+A aplicação possui:
+
+- Cadastro de usuários
+- Login e logout
+- Autenticação com Laravel Sanctum
+- Persistência da sessão através de token
+- Visualização do próprio perfil
+- Edição de:
+  - nome
+  - username
+  - bio
+  - foto de perfil
+- Visualização de perfis de outros usuários
+- Seguir e deixar de seguir usuários
+- Contagem de seguidores e seguindo
+- Criação de publicações
+- Upload de imagens
+- Upload de vídeos
+- Exclusão das próprias publicações
+- Curtir e remover curtidas
+- Visualização de comentários
+- Criação de comentários
+- Feed de publicações
+- Sugestões de usuários para seguir
+- Busca por nome ou username
+- Visualização individual de uma publicação
+- Tratamento de rotas inexistentes com página 404
+- Seeders para popular o banco de desenvolvimento
+- Documentação da API com Swagger UI
+
+---
+
+# Tecnologias
+
+## Backend
 
 - PHP 8.4
 - Laravel
@@ -17,7 +53,7 @@ O backend foi desenvolvido como uma API REST utilizando Laravel e organizado no 
 - Composer
 - Swagger UI
 
-### Frontend
+## Frontend
 
 - Vue.js 3
 - Vue Router
@@ -26,98 +62,191 @@ O backend foi desenvolvido como uma API REST utilizando Laravel e organizado no 
 - Tailwind CSS
 - Vite
 
-### Infraestrutura
+## Infraestrutura
 
 - Docker
 - Docker Compose
 - Nginx
+- Apache para imagem de produção da API
 
-## Funcionalidades
+---
 
-- Registro de usuários
-- Login e logout
-- Autenticação via token com Laravel Sanctum
-- Visualização e edição do próprio perfil
-- Alteração de nome, username, bio e foto de perfil
-- Visualização de outros perfis
-- Seguir e deixar de seguir usuários
-- Criação de publicações com imagem ou vídeo
-- Exclusão das próprias publicações
-- Curtir e remover curtida de publicações
-- Visualização e criação de comentários
-- Feed de publicações
-- Sugestões de usuários para seguir
-- Pesquisa de usuários por nome ou username
-- Página individual de publicação
-- Tratamento de rotas inexistentes
-- Seeders para geração de dados de teste
-- Documentação da API com Swagger UI
+# Arquitetura
 
-## Estrutura do projeto
+O backend segue o padrão **MSC — Model, Service, Controller**.
 
 ```text
-instagram-clone/
+Request HTTP
+     ↓
+Controller
+     ↓
+Service
+     ↓
+Model
+     ↓
+MySQL
+```
+
+### Model
+
+Responsável pela representação das entidades e seus relacionamentos com o banco de dados.
+
+### Service
+
+Responsável pelas regras de negócio da aplicação.
+
+### Controller
+
+Responsável por receber requisições HTTP, chamar os serviços necessários e devolver as respostas da API.
+
+---
+
+# Estrutura do projeto
+
+```text
+ProjetoFinal/
+│
 ├── compose.yaml
+├── .env
 ├── .env.example
+├── .gitignore
 ├── README.md
 │
-├── backend/
+├── api/
 │   ├── Dockerfile
 │   ├── Dockerfile.dev
 │   ├── .dockerignore
+│   ├── .env
 │   ├── .env.example
 │   ├── app/
+│   ├── bootstrap/
+│   ├── config/
 │   ├── database/
+│   ├── public/
 │   ├── routes/
-│   └── ...
+│   ├── storage/
+│   ├── composer.json
+│   ├── composer.lock
+│   └── artisan
 │
 └── frontend/
     ├── Dockerfile
     ├── .dockerignore
+    ├── .env
     ├── .env.example
     ├── src/
-    └── ...
+    ├── public/
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
 ```
 
-## Pré-requisitos
+---
 
-Para executar o projeto é necessário ter instalado:
+# Docker
+
+O projeto utiliza **um único `compose.yaml` na raiz** para orquestrar os serviços:
+
+```text
+Docker Compose
+│
+├── frontend
+│   └── Vue + Nginx
+│
+├── api
+│   └── Laravel
+│
+└── mysql
+    └── MySQL 8.4
+```
+
+O backend possui dois Dockerfiles:
+
+```text
+api/Dockerfile.dev
+```
+
+utilizado no ambiente de desenvolvimento, e:
+
+```text
+api/Dockerfile
+```
+
+preparado para produção.
+
+O frontend utiliza:
+
+```text
+frontend/Dockerfile
+```
+
+com multi-stage build:
+
+```text
+Node.js
+   ↓
+npm run build
+   ↓
+dist/
+   ↓
+Nginx
+```
+
+---
+
+# Pré-requisitos
+
+Para executar a aplicação utilizando Docker é necessário ter instalado:
 
 - Git
 - Docker
 - Docker Compose
 
-Não é necessário instalar PHP, Composer, Node.js ou MySQL diretamente na máquina, pois esses componentes são executados através dos containers Docker.
+Não é necessário instalar localmente:
 
-## Instalação
+- PHP
+- Composer
+- MySQL
+- Node.js
+- Nginx
 
-### 1. Clone o repositório
+Esses componentes são executados através dos containers.
+
+---
+
+# Instalação
+
+## 1. Clone o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/joaolack/CloneGram.git
 ```
 
-Entre na pasta do projeto:
+Entre na pasta:
 
 ```bash
-cd <NOME_DA_PASTA>
+cd ProjetoFinal
 ```
 
-### 2. Configure as variáveis de ambiente da raiz
+---
 
-Copie:
+## 2. Configure o ambiente do Docker Compose
+
+Crie o `.env` da raiz a partir do exemplo:
+
+### Linux / macOS
 
 ```bash
 cp .env.example .env
 ```
 
-No Windows PowerShell:
+### Windows PowerShell
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-O arquivo contém as configurações utilizadas pelo Docker Compose, por exemplo:
+Exemplo:
 
 ```env
 VITE_API_URL=http://localhost:8000/api
@@ -128,23 +257,31 @@ MYSQL_PASSWORD=instagram
 MYSQL_ROOT_PASSWORD=root
 ```
 
-### 3. Configure o backend
+Esse `.env` é utilizado principalmente pelo Docker Compose.
 
-Copie o arquivo de exemplo:
+---
+
+## 3. Configure a API Laravel
+
+Crie:
 
 ```bash
-cp backend/.env.example backend/.env
+cp api/.env.example api/.env
 ```
 
 No PowerShell:
 
 ```powershell
-Copy-Item backend/.env.example backend/.env
+Copy-Item api/.env.example api/.env
 ```
 
-Confira principalmente as configurações do banco:
+Confira principalmente estas configurações:
 
 ```env
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
@@ -153,17 +290,29 @@ DB_USERNAME=instagram
 DB_PASSWORD=instagram
 ```
 
-O valor:
+### Atenção ao `APP_URL`
+
+É importante utilizar:
 
 ```env
-DB_HOST=mysql
+APP_URL=http://localhost:8000
 ```
 
-é utilizado porque `mysql` é o nome do serviço do banco de dados dentro da rede Docker.
+e não apenas:
 
-### 4. Configure o frontend
+```env
+APP_URL=http://localhost
+```
 
-Copie:
+O Laravel utiliza essa configuração para gerar URLs absolutas.
+
+Uma configuração incorreta pode fazer com que imagens de posts, vídeos e fotos de perfil sejam geradas com URLs inválidas.
+
+---
+
+## 4. Configure o frontend
+
+Crie:
 
 ```bash
 cp frontend/.env.example frontend/.env
@@ -175,27 +324,31 @@ No PowerShell:
 Copy-Item frontend/.env.example frontend/.env
 ```
 
-A URL da API deve estar configurada como:
+Configure:
 
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
 
-### 5. Construa e inicie os containers
+O frontend utiliza essa variável através do Vite:
 
-Na raiz do projeto:
+```js
+import.meta.env.VITE_API_URL
+```
+
+A URL da API, portanto, não fica fixa diretamente no código-fonte.
+
+---
+
+# Iniciando a aplicação
+
+Na raiz do projeto execute:
 
 ```bash
 docker compose up -d --build
 ```
 
-Verifique os containers:
-
-```bash
-docker compose ps
-```
-
-Os serviços esperados são:
+Esse comando irá construir e iniciar:
 
 ```text
 frontend
@@ -203,51 +356,81 @@ api
 mysql
 ```
 
-### 6. Gere a chave da aplicação Laravel
+Confira o estado dos containers:
+
+```bash
+docker compose ps
+```
+
+O MySQL deve aparecer como saudável:
+
+```text
+mysql    Up (healthy)
+```
+
+---
+
+# Configurando o Laravel pela primeira vez
+
+Depois que os containers estiverem ativos, gere a chave da aplicação:
 
 ```bash
 docker compose exec api php artisan key:generate
 ```
 
-### 7. Execute as migrations e seeders
+Limpe os caches:
+
+```bash
+docker compose exec api php artisan optimize:clear
+```
+
+Execute as migrations e os seeders:
 
 ```bash
 docker compose exec api php artisan migrate --seed
 ```
 
-### 8. Crie o link para os arquivos públicos
+Crie o link público do storage:
 
 ```bash
 docker compose exec api php artisan storage:link
 ```
 
-### 9. Acesse a aplicação
+O `storage:link` é necessário para disponibilizar publicamente arquivos como:
 
-Frontend:
+```text
+fotos de perfil
+imagens dos posts
+vídeos dos posts
+```
+
+---
+
+# Acessando a aplicação
+
+## Frontend
 
 ```text
 http://localhost:5173
 ```
 
-API:
+## API
 
 ```text
 http://localhost:8000
 ```
 
-## Banco de dados
-
-O MySQL é executado em um container Docker e os dados são mantidos através de um volume persistente.
-
-Para acessar o banco a partir de uma ferramenta como DBeaver:
+## API REST
 
 ```text
-Host: localhost
-Porta: 3307
-Database: instagram
-Usuário: instagram
-Senha: instagram
+http://localhost:8000/api
 ```
+
+---
+
+# Banco de dados
+
+O banco MySQL é executado pelo Docker.
 
 Dentro da rede Docker, a API utiliza:
 
@@ -256,188 +439,203 @@ Host: mysql
 Porta: 3306
 ```
 
-Portanto:
+Por isso o Laravel possui:
+
+```env
+DB_HOST=mysql
+DB_PORT=3306
+```
+
+---
+
+# Persistência do banco
+
+O MySQL utiliza um volume Docker:
 
 ```text
-DBeaver                  Docker
-localhost:3307  ──────→  mysql:3306
+db_data
 ```
 
-## Documentação da API
-
-A API possui documentação interativa através do Swagger UI.
-
-Após iniciar os containers, a documentação pode ser acessada em:
-
-```text
-<URL_DO_SWAGGER>
-```
-
-A documentação contém os principais endpoints relacionados a:
-
-- autenticação;
-- usuários;
-- perfis;
-- publicações;
-- seguidores;
-- curtidas;
-- comentários;
-- busca;
-- feed.
-
-## Comandos úteis
-
-Iniciar os containers:
-
-```bash
-docker compose up -d
-```
-
-Iniciar e reconstruir as imagens:
-
-```bash
-docker compose up -d --build
-```
-
-Visualizar os containers:
-
-```bash
-docker compose ps
-```
-
-Visualizar os logs:
-
-```bash
-docker compose logs -f
-```
-
-Logs apenas da API:
-
-```bash
-docker compose logs -f api
-```
-
-Executar comandos Artisan:
-
-```bash
-docker compose exec api php artisan <comando>
-```
-
-Executar os seeders:
-
-```bash
-docker compose exec api php artisan db:seed
-```
-
-Limpar os caches do Laravel:
-
-```bash
-docker compose exec api php artisan optimize:clear
-```
-
-Parar os containers:
+Por isso:
 
 ```bash
 docker compose down
 ```
 
-Parar os containers e remover também os volumes:
+remove os containers, mas mantém os dados.
+
+Ao executar novamente:
+
+```bash
+docker compose up -d
+```
+
+o banco continua com os dados anteriores.
+
+Já:
 
 ```bash
 docker compose down -v
 ```
 
-> Atenção: `docker compose down -v` remove o volume do MySQL e, consequentemente, os dados armazenados no banco.
+remove também os volumes.
 
-## Docker
+> Atenção: esse comando apaga o banco de dados armazenado pelo Docker.
 
-O projeto utiliza um único arquivo:
+---
 
-```text
-compose.yaml
+# Desenvolvimento do backend
+
+O serviço da API utiliza um bind mount:
+
+```yaml
+volumes:
+  - ./api:/var/www/html
+  - api_vendor:/var/www/html/vendor
 ```
 
-na raiz para orquestrar os três serviços:
+Isso significa que o código da pasta:
 
 ```text
-frontend
-   ↓
-Vue + Nginx
-
-api
-   ↓
-Laravel
-
-mysql
-   ↓
-MySQL 8.4
+./api
 ```
 
-O backend possui dois Dockerfiles:
+é montado dentro do container em:
 
 ```text
-Dockerfile.dev
+/var/www/html
 ```
 
-utilizado para desenvolvimento, e:
+Portanto, mudanças em arquivos Laravel são refletidas imediatamente no container.
+
+Por exemplo:
 
 ```text
-Dockerfile
+api/app/Services/PostService.php
 ```
 
-preparado para produção.
-
-O frontend possui um único `Dockerfile`, utilizando multi-stage build com Node.js para gerar a aplicação e Nginx para servir os arquivos finais.
-
-## Variáveis de ambiente
-
-Arquivos `.env` reais não são versionados.
-
-O repositório contém arquivos `.env.example` com as configurações necessárias para executar o projeto.
-
-Nunca adicione senhas ou outros segredos reais aos arquivos `.env.example`.
-
-## Arquitetura do backend
-
-O backend segue o padrão MSC:
+é visto pelo container como:
 
 ```text
-Request
-   ↓
-Controller
-   ↓
-Service
-   ↓
-Model
-   ↓
-Database
+/var/www/html/app/Services/PostService.php
 ```
 
-### Model
+Assim, alterações comuns em:
 
-Responsável pelas entidades e relacionamentos com o banco de dados.
+```text
+Controllers
+Services
+Models
+Resources
+Requests
+Policies
+Routes
+```
 
-### Service
+normalmente não exigem reconstruir a imagem Docker.
 
-Responsável pelas regras de negócio da aplicação.
+---
 
-### Controller
+# Dependências do Composer
 
-Responsável por receber as requisições HTTP, chamar os Services e retornar as respostas da API.
+As dependências PHP ficam em um volume Docker separado:
 
-## Autenticação
+```text
+api_vendor
+```
 
-A API utiliza Laravel Sanctum.
+Para instalar um novo pacote:
 
-Após o login, a API retorna um token de autenticação que é enviado pelo frontend nas requisições protegidas:
+```bash
+docker compose exec api composer require nome/pacote
+```
+
+Para reinstalar dependências:
+
+```bash
+docker compose exec api composer install
+```
+
+---
+
+# Migrations
+
+Depois de criar uma migration:
+
+```bash
+docker compose exec api php artisan migrate
+```
+
+Para reconstruir completamente o banco de desenvolvimento:
+
+```bash
+docker compose exec api php artisan migrate:fresh --seed
+```
+
+> Esse comando apaga todos os dados existentes antes de recriar as tabelas.
+
+---
+
+# Desenvolvimento do frontend
+
+O frontend executado pelo Docker é construído com:
+
+```bash
+npm run build
+```
+
+e servido pelo Nginx.
+
+Por isso, alterações no código Vue não aparecem automaticamente no container atual.
+
+Depois de alterar o frontend, reconstrua o serviço:
+
+```bash
+docker compose up -d --build frontend
+```
+
+Para desenvolvimento diretamente com o Vite, também é possível executar o frontend fora do container utilizando:
+
+```bash
+npm install
+npm run dev
+```
+
+dentro da pasta:
+
+```text
+frontend/
+```
+
+Nesse caso, certifique-se de que:
+
+```env
+VITE_API_URL=http://localhost:8000/api
+```
+
+esteja configurado no `frontend/.env`.
+
+---
+
+# Autenticação
+
+A API utiliza **Laravel Sanctum**.
+
+Após um login válido, a API retorna um token.
+
+O frontend envia esse token nas requisições protegidas através do header:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-O Axios é configurado para adicionar o token automaticamente às requisições autenticadas.
+O Axios adiciona o token automaticamente às requisições autenticadas.
 
-## Principais relacionamentos
+Exceto login e registro, as funcionalidades da aplicação exigem autenticação.
+
+---
+
+# Principais relacionamentos
 
 ```text
 User 1:N Post
@@ -453,26 +651,311 @@ User N:N User
      via follows
 ```
 
-## Persistência
+As relações de like e follow possuem restrições para impedir duplicidades.
 
-O banco MySQL utiliza um volume Docker para preservar os dados mesmo após os containers serem interrompidos.
+---
 
-Executar:
+# Uploads
+
+As mídias enviadas pela aplicação são armazenadas utilizando o filesystem do Laravel.
+
+Os arquivos públicos ficam associados a:
+
+```text
+storage/app/public
+```
+
+e são disponibilizados através de:
+
+```text
+public/storage
+```
+
+criado pelo comando:
+
+```bash
+docker compose exec api php artisan storage:link
+```
+
+Caso as imagens não carreguem, confira:
+
+```env
+APP_URL=http://localhost:8000
+```
+
+e execute:
+
+```bash
+docker compose exec api php artisan optimize:clear
+docker compose exec api php artisan storage:link
+```
+
+---
+
+# Documentação da API
+
+A API possui documentação interativa utilizando Swagger UI.
+
+Após iniciar a aplicação, acesse:
+
+```text
+http://localhost:8000/docs
+```
+
+A documentação apresenta os endpoints relacionados a:
+
+```text
+Autenticação
+Perfis
+Usuários
+Posts
+Likes
+Comentários
+Seguidores
+Busca
+Home
+```
+
+---
+
+# Principais endpoints
+
+Alguns dos endpoints disponíveis são:
+
+```text
+POST   /api/register
+POST   /api/login
+POST   /api/logout
+
+GET    /api/me
+
+GET    /api/home
+
+GET    /api/profile
+PUT    /api/profile
+
+GET    /api/users
+GET    /api/users/{username}
+
+POST   /api/users/{username}/follow
+DELETE /api/users/{username}/follow
+
+GET    /api/posts
+POST   /api/posts
+GET    /api/posts/{post}
+DELETE /api/posts/{post}
+
+POST   /api/posts/{post}/like
+DELETE /api/posts/{post}/like
+
+GET    /api/posts/{post}/comments
+POST   /api/posts/{post}/comments
+```
+
+Para consultar detalhes dos parâmetros e respostas, utilize o Swagger UI.
+
+---
+
+# Comandos úteis
+
+## Subir os containers
+
+```bash
+docker compose up -d
+```
+
+## Construir e subir
+
+```bash
+docker compose up -d --build
+```
+
+## Ver containers
+
+```bash
+docker compose ps
+```
+
+## Ver logs
+
+```bash
+docker compose logs
+```
+
+## Logs em tempo real
+
+```bash
+docker compose logs -f
+```
+
+## Logs da API
+
+```bash
+docker compose logs -f api
+```
+
+## Logs do frontend
+
+```bash
+docker compose logs -f frontend
+```
+
+## Logs do MySQL
+
+```bash
+docker compose logs -f mysql
+```
+
+## Entrar no container da API
+
+```bash
+docker compose exec api bash
+```
+
+## Executar Artisan
+
+```bash
+docker compose exec api php artisan <comando>
+```
+
+## Limpar cache do Laravel
+
+```bash
+docker compose exec api php artisan optimize:clear
+```
+
+## Executar migrations
+
+```bash
+docker compose exec api php artisan migrate
+```
+
+## Executar seeders
+
+```bash
+docker compose exec api php artisan db:seed
+```
+
+## Parar os containers
 
 ```bash
 docker compose down
 ```
 
-não remove os dados.
-
-Já:
+## Parar e remover volumes
 
 ```bash
 docker compose down -v
 ```
 
-remove os volumes e apaga o banco de desenvolvimento.
+---
 
-## Licença
+# Variáveis de ambiente
+
+Os arquivos `.env` reais não devem ser versionados.
+
+O repositório disponibiliza arquivos `.env.example` contendo as variáveis necessárias para executar a aplicação sem expor segredos.
+
+Arquivos esperados:
+
+```text
+.env.example
+api/.env.example
+frontend/.env.example
+```
+
+Não coloque senhas reais, tokens ou outros segredos nesses arquivos.
+
+---
+
+# Testando uma instalação limpa
+
+Uma forma de verificar se o projeto pode ser executado em outra máquina é remover completamente os containers e volumes:
+
+```bash
+docker compose down -v
+```
+
+Depois:
+
+```bash
+docker compose up -d --build
+```
+
+Execute novamente:
+
+```bash
+docker compose exec api php artisan key:generate
+docker compose exec api php artisan migrate --seed
+docker compose exec api php artisan storage:link
+```
+
+E acesse:
+
+```text
+http://localhost:5173
+```
+
+O projeto também foi testado a partir de um clone em outra máquina utilizando Docker.
+
+---
+
+# Git
+
+Arquivos como estes não devem ser enviados ao repositório:
+
+```text
+.env
+api/.env
+frontend/.env
+
+api/vendor/
+frontend/node_modules/
+frontend/dist/
+```
+
+Arquivos importantes que devem ser versionados:
+
+```text
+compose.yaml
+
+.env.example
+
+api/Dockerfile
+api/Dockerfile.dev
+api/.dockerignore
+api/.env.example
+
+frontend/Dockerfile
+frontend/.dockerignore
+frontend/.env.example
+
+composer.lock
+package-lock.json
+```
+
+---
+
+# Objetivo acadêmico
+
+O projeto foi desenvolvido com o objetivo de aplicar conceitos de:
+
+- APIs REST
+- autenticação e autorização
+- Laravel
+- arquitetura MSC
+- Eloquent ORM
+- relacionamentos entre entidades
+- upload de arquivos
+- Vue.js
+- integração frontend/backend
+- Docker
+- Docker Compose
+- bancos de dados relacionais
+- documentação de APIs
+
+---
+
+# Licença
 
 Projeto desenvolvido para fins acadêmicos e educacionais.
