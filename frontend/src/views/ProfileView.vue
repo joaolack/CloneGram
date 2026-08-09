@@ -2,8 +2,10 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const auth = useAuthStore()
 
 const profile = ref(null)
 
@@ -168,6 +170,10 @@ async function updateProfile() {
 
     profile.value =
       response.data.data ?? response.data
+
+    if (isOwnProfile.value) {
+      auth.user = profile.value
+    }
 
     editing.value = false
 

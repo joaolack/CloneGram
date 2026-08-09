@@ -73,7 +73,7 @@ async function register() {
             text-gray-900
           "
         >
-          Instagram Clone
+          CloneGram
         </h1>
 
         <p

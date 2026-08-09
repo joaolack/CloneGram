@@ -4,87 +4,64 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000/api}
-
+        VITE_API_URL: ${VITE_API_URL}
     ports:
       - "5173:80"
-
     depends_on:
       - api
-
     networks:
       - instagram-clone
-
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
-
     ports:
       - "8000:8000"
-
     volumes:
       - ./api:/var/www/html
       - api_vendor:/var/www/html/vendor
-
     env_file:
       - ./api/.env
-
     depends_on:
       mysql:
         condition: service_healthy
-
     command: >
       sh -c "
       composer install --no-interaction --prefer-dist &&
       php artisan serve --host=0.0.0.0 --port=8000
       "
-
     networks:
       - instagram-clone
 
-
   mysql:
     image: mysql:8.4
-
     restart: unless-stopped
-
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-instagram}
-      MYSQL_USER: ${MYSQL_USER:-instagram}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-instagram}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "3307:3306"
-
+      - "127.0.0.1:3307:3306"
     volumes:
       - db_data:/var/lib/mysql
-
     healthcheck:
       test:
         [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-p${MYSQL_ROOT_PASSWORD:-root}"
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD}"
         ]
       interval: 5s
       timeout: 5s
       retries: 15
       start_period: 10s
-
     networks:
       - instagram-clone
-
 
 volumes:
   db_data:
   api_vendor:
-
 
 networks:
   instagram-clone:

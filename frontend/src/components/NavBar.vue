@@ -1,14 +1,32 @@
 <script setup>
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Home, Search, SquarePlus, SquareArrowRightExit } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
+const profileInitial = computed(() => {
+  const label = auth.user?.username || auth.user?.name || ''
+
+  return label.charAt(0) || '?'
+})
+
 function isActive(name) {
   return route.name === name
 }
+
+onMounted(async () => {
+  if (!auth.token || auth.user) return
+
+  try {
+    await auth.fetchUser()
+  } catch (error) {
+    console.error('Erro ao carregar usuario:', error)
+  }
+})
 
 async function logout() {
   try {
@@ -20,8 +38,57 @@ async function logout() {
 </script>
 
 <template>
+  <header
+    class="
+      fixed
+      left-0
+      right-0
+      top-0
+      z-40
+      flex
+      h-16
+      items-center
+      gap-4
+      border-b
+      border-gray-200
+      bg-white
+      px-4
+      md:hidden
+    "
+  >
+    <RouterLink
+      to="/"
+      class="shrink-0 font-logo text-2xl text-gray-900"
+    >
+      <strong>CloneGram</strong>
+    </RouterLink>
+    <RouterLink
+      to="/search"
+      class="
+        ml-auto
+        flex
+        h-10
+        min-w-0
+        max-w-[190px]
+        flex-1
+        items-center
+        gap-2
+        rounded-full
+        bg-gray-100
+        px-4
+        text-sm
+        text-gray-500
+      "
+    >
+      <Search class="h-4 w-4 shrink-0" />
+      <span class="truncate">Pesquisar</span>
+    </RouterLink>
+
+
+  </header>
+
   <aside
-    class="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r
+    class="fixed bottom-0 left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r
       border-gray-200 bg-white px-4 py-8 md:flex"
   >
     <RouterLink
@@ -36,8 +103,8 @@ async function logout() {
         class="nav-item"
         :class="{ 'bg-gray-100 font-semibold': isActive('home') }"
       >
-        <span class="text-xl">⌂</span>
-        Home
+        <Home class="w-6 h-6" />
+        <span>Home</span>
       </RouterLink>
 
       <RouterLink
@@ -45,8 +112,8 @@ async function logout() {
         class="nav-item"
         :class="{ 'bg-gray-100 font-semibold': isActive('search') }"
       >
-        <span class="text-xl">⌕</span>
-        Pesquisar
+        <Search class="w-6 h-6" />
+        <span>Pesquisar</span>
       </RouterLink>
 
       <RouterLink
@@ -54,8 +121,8 @@ async function logout() {
         class="nav-item"
         :class="{ 'bg-gray-100 font-semibold': isActive('create-post') }"
       >
-        <span class="text-xl">＋</span>
-        Criar
+        <SquarePlus class="w-6 h-6" />
+        <span>Criar</span>
       </RouterLink>
 
       <RouterLink
@@ -63,7 +130,24 @@ async function logout() {
         class="nav-item"
         :class="{ 'bg-gray-100 font-semibold': isActive('my-profile') }"
       >
-        <span class="text-xl">○</span>
+        <span
+          class="nav-avatar h-7 w-7"
+          :class="{ 'ring-2 ring-gray-900 ring-offset-1': isActive('my-profile') }"
+        >
+          <img
+            v-if="auth.user?.avatar_url"
+            :src="auth.user.avatar_url"
+            :alt="auth.user.username ?? 'Perfil'"
+            class="h-full w-full object-cover"
+          />
+
+          <span
+            v-else
+            class="text-xs font-semibold uppercase"
+          >
+            {{ profileInitial }}
+          </span>
+        </span>
         Perfil
       </RouterLink>
     </nav>
@@ -85,9 +169,8 @@ async function logout() {
       "
       @click="logout"
     >
-      <span class="text-xl">↪</span>
-
-      Sair
+        <SquareArrowRightExit class="w-6 h-6"/>
+        <span>Sair</span>
     </button>
   </aside>
 
@@ -98,7 +181,7 @@ async function logout() {
       class="mobile-nav-item"
       :class="{ 'font-bold text-black': isActive('home') }"
     >
-      <span class="text-2xl">⌂</span>
+      <Home class="w-6 h-6" />
     </RouterLink>
 
     <RouterLink
@@ -106,7 +189,7 @@ async function logout() {
       class="mobile-nav-item"
       :class="{ 'font-bold text-black': isActive('search') }"
     >
-      <span class="text-2xl">⌕</span>
+      <Search class="w-6 h-6" />
     </RouterLink>
 
     <RouterLink
@@ -114,7 +197,7 @@ async function logout() {
       class="mobile-nav-item"
       :class="{ 'font-bold text-black': isActive('create-post') }"
     >
-      <span class="text-2xl">＋</span>
+      <SquarePlus class="w-6 h-6" />
     </RouterLink>
 
     <RouterLink
@@ -122,7 +205,24 @@ async function logout() {
       class="mobile-nav-item"
       :class="{ 'font-bold text-black': isActive('my-profile') }"
     >
-      <span class="text-2xl">○</span>
+      <span
+        class="nav-avatar h-8 w-8"
+        :class="{ 'ring-2 ring-gray-900 ring-offset-1': isActive('my-profile') }"
+      >
+        <img
+          v-if="auth.user?.avatar_url"
+          :src="auth.user.avatar_url"
+          :alt="auth.user.username ?? 'Perfil'"
+          class="h-full w-full object-cover"
+        />
+
+        <span
+          v-else
+          class="text-xs font-semibold uppercase"
+        >
+          {{ profileInitial }}
+        </span>
+      </span>
     </RouterLink>
   </nav>
 </template>
@@ -136,5 +236,9 @@ async function logout() {
 
 .mobile-nav-item {
   @apply flex items-center justify-center rounded-lg p-2 text-gray-600;
+}
+
+.nav-avatar {
+  @apply flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-gray-600;
 }
 </style>

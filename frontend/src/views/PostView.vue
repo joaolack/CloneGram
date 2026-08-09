@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
+import { ArrowLeft } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
 
@@ -137,6 +138,10 @@ async function addComment() {
   }
 }
 
+function goBack() {
+  router.back()
+}
+
 onMounted(fetchPost)
 </script>
 
@@ -154,7 +159,22 @@ onMounted(fetchPost)
       lg:px-8
     "
   >
-    <!-- Loading -->
+    <button
+      type="button"
+      class="
+        mb-4
+        rounded-full
+        p-2
+        text-gray-700
+        transition
+        hover:bg-gray-100
+        hover:text-black
+      "
+      @click="goBack"
+    >
+      <ArrowLeft class="h-6 w-6" />
+    </button>
+
     <div
       v-if="loading"
       class="
@@ -177,7 +197,6 @@ onMounted(fetchPost)
       />
     </div>
 
-    <!-- Erro -->
     <div
       v-else-if="error"
       class="
@@ -196,7 +215,7 @@ onMounted(fetchPost)
       {{ error }}
     </div>
 
-    <!-- Post -->
+
     <section
       v-else-if="post"
       class="
@@ -210,7 +229,7 @@ onMounted(fetchPost)
         lg:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)]
       "
     >
-      <!-- Mídia -->
+
       <div
         class="
           flex
@@ -244,7 +263,6 @@ onMounted(fetchPost)
         />
       </div>
 
-      <!-- Painel lateral -->
       <div
         class="
           flex
@@ -257,7 +275,6 @@ onMounted(fetchPost)
           lg:border-t-0
         "
       >
-        <!-- Autor -->
         <header
           class="
             flex

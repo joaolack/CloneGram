@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import api from '@/api/axios'
+import { Heart, MessageCircle } from 'lucide-vue-next'
 
 const props = defineProps({
   post: {
@@ -167,35 +168,15 @@ async function toggleLike() {
           "
           @click="toggleLike"
         >
-
-          <svg
-            v-if="liked"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="h-7 w-7 text-red-500"
-          >
-            <path
-              d="M11.645 20.91a.75.75 0 0 0 .71 0c.695-.398 6.862-4.072 8.56-8.474C22.488 8.36 20.287 4.5 16.25 4.5c-1.98 0-3.46 1.126-4.25 2.12C11.21 5.626 9.73 4.5 7.75 4.5 3.713 4.5 1.512 8.36 3.085 12.436c1.698 4.402 7.865 8.076 8.56 8.474Z"
+            <Heart
+                class="h-7 w-7"
+                :class="
+                liked
+                    ? 'fill-red-500 text-red-500'
+                    : 'text-gray-900'
+                "
+                :stroke-width="1.8"
             />
-          </svg>
-
-
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.8"
-            stroke="currentColor"
-            class="h-7 w-7 text-gray-900"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21.435 2.582a5.375 5.375 0 0 0-7.604 0L12 4.413l-1.831-1.831a5.375 5.375 0 0 0-7.604 7.604L12 19.621l9.435-9.435a5.375 5.375 0 0 0 0-7.604Z"
-            />
-          </svg>
         </button>
 
 
@@ -207,20 +188,10 @@ async function toggleLike() {
             hover:scale-110
           "
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.8"
-            stroke="currentColor"
-            class="h-7 w-7"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M8.625 12h.008v.008h-.008V12Zm3.375 0h.008v.008H12V12Zm3.375 0h.008v.008h-.008V12ZM21 12c0 4.556-4.03 8.25-9 8.25a9.86 9.86 0 0 1-4.255-.949L3 20.25l1.245-3.32A7.814 7.814 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+            <MessageCircle
+                class="h-7 w-7"
+                :stroke-width="1.8"
             />
-          </svg>
         </RouterLink>
       </div>
 

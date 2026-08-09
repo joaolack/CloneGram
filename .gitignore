@@ -1,7 +1,3 @@
-# =========================
-# Variáveis de ambiente
-# =========================
-
 .env
 .env.local
 .env.production
@@ -16,12 +12,6 @@ frontend/.env
 frontend/.env.local
 frontend/.env.production
 
-# NÃO ignorar .env.example
-
-
-# =========================
-# Laravel / PHP
-# =========================
 
 backend/vendor/
 
@@ -36,10 +26,6 @@ backend/.phpunit.result.cache
 backend/phpunit.xml
 
 
-# =========================
-# Vue / Node
-# =========================
-
 frontend/node_modules/
 frontend/dist/
 
@@ -48,29 +34,14 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 frontend/pnpm-debug.log*
 
-
-# =========================
-# IDE / Editores
-# =========================
-
 .vscode/
 .idea/
 
 *.swp
 *.swo
 
-
-# =========================
-# Sistema operacional
-# =========================
-
 .DS_Store
 Thumbs.db
 desktop.ini
-
-
-# =========================
-# Docker
-# =========================
 
 *.pid

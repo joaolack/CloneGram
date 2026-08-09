@@ -1,42 +1,34 @@
-# Instagram Clone
+# CloneGram
 
 Aplicação web inspirada no Instagram, desenvolvida como projeto final do curso.
 
-O projeto possui uma **API REST em Laravel** e um **frontend em Vue.js**, permitindo interação entre usuários por meio de publicações, curtidas, comentários e seguidores.
+O projeto possui uma **API REST em Laravel** e um **frontend em Vue.js**, permitindo cadastro e autenticação de usuários, edição de perfil, publicações com imagem ou vídeo, curtidas, comentários, seguidores, busca de usuários e feed.
 
-Todo o ambiente pode ser executado com Docker através de um único arquivo `compose.yaml` localizado na raiz do projeto.
+Todo o ambiente pode ser executado com Docker por meio de um único arquivo `compose.yaml` localizado na raiz do projeto.
 
 ---
 
 ## Funcionalidades
 
-A aplicação possui:
-
 - Cadastro de usuários
 - Login e logout
 - Autenticação com Laravel Sanctum
-- Persistência da sessão através de token
-- Visualização do próprio perfil
-- Edição de:
-  - nome
-  - username
-  - bio
-  - foto de perfil
-- Visualização de perfis de outros usuários
+- Persistência da autenticação por token
+- Visualização e edição do próprio perfil
+- Alteração de nome, username, bio e foto de perfil
+- Visualização de outros perfis
 - Seguir e deixar de seguir usuários
-- Contagem de seguidores e seguindo
+- Contagem de seguidores e usuários seguidos
 - Criação de publicações
-- Upload de imagens
-- Upload de vídeos
+- Upload de imagens e vídeos
 - Exclusão das próprias publicações
 - Curtir e remover curtidas
-- Visualização de comentários
-- Criação de comentários
+- Visualização e criação de comentários
 - Feed de publicações
 - Sugestões de usuários para seguir
-- Busca por nome ou username
+- Busca de usuários por nome ou username
 - Visualização individual de uma publicação
-- Tratamento de rotas inexistentes com página 404
+- Página 404 para rotas inexistentes
 - Seeders para popular o banco de desenvolvimento
 - Documentação da API com Swagger UI
 
@@ -67,7 +59,7 @@ A aplicação possui:
 - Docker
 - Docker Compose
 - Nginx
-- Apache para imagem de produção da API
+- Apache na imagem de produção da API
 
 ---
 
@@ -89,7 +81,7 @@ MySQL
 
 ### Model
 
-Responsável pela representação das entidades e seus relacionamentos com o banco de dados.
+Responsável pela representação das entidades e pelos relacionamentos com o banco de dados.
 
 ### Service
 
@@ -97,7 +89,7 @@ Responsável pelas regras de negócio da aplicação.
 
 ### Controller
 
-Responsável por receber requisições HTTP, chamar os serviços necessários e devolver as respostas da API.
+Responsável por receber as requisições HTTP, chamar os serviços necessários e retornar as respostas da API.
 
 ---
 
@@ -202,15 +194,7 @@ Para executar a aplicação utilizando Docker é necessário ter instalado:
 - Docker
 - Docker Compose
 
-Não é necessário instalar localmente:
-
-- PHP
-- Composer
-- MySQL
-- Node.js
-- Nginx
-
-Esses componentes são executados através dos containers.
+Não é necessário instalar localmente PHP, Composer, MySQL, Node.js ou Nginx, pois esses componentes são executados pelos containers.
 
 ---
 
@@ -219,10 +203,10 @@ Esses componentes são executados através dos containers.
 ## 1. Clone o repositório
 
 ```bash
-git clone https://github.com/joaolack/CloneGram.git
+git clone <URL_DO_REPOSITORIO>
 ```
 
-Entre na pasta:
+Entre na pasta do projeto:
 
 ```bash
 cd ProjetoFinal
@@ -230,9 +214,9 @@ cd ProjetoFinal
 
 ---
 
-## 2. Configure o ambiente do Docker Compose
+## 2. Configure o ambiente da raiz
 
-Crie o `.env` da raiz a partir do exemplo:
+Crie o arquivo `.env` a partir do exemplo.
 
 ### Linux / macOS
 
@@ -246,6 +230,19 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
+O arquivo `.env.example` da raiz pode conter:
+
+```env
+VITE_API_URL=http://localhost:8000/api
+
+MYSQL_DATABASE=instagram
+MYSQL_USER=instagram
+MYSQL_PASSWORD=change_me
+MYSQL_ROOT_PASSWORD=change_me
+```
+
+Depois de copiar o arquivo, substitua `change_me` por senhas locais de sua escolha.
+
 Exemplo:
 
 ```env
@@ -253,23 +250,25 @@ VITE_API_URL=http://localhost:8000/api
 
 MYSQL_DATABASE=instagram
 MYSQL_USER=instagram
-MYSQL_PASSWORD=instagram
-MYSQL_ROOT_PASSWORD=root
+MYSQL_PASSWORD=minha_senha_local
+MYSQL_ROOT_PASSWORD=minha_senha_root_local
 ```
 
-Esse `.env` é utilizado principalmente pelo Docker Compose.
+> Os arquivos `.env` reais não devem ser enviados ao repositório.
 
 ---
 
 ## 3. Configure a API Laravel
 
-Crie:
+Crie o arquivo da API:
+
+### Linux / macOS
 
 ```bash
 cp api/.env.example api/.env
 ```
 
-No PowerShell:
+### Windows PowerShell
 
 ```powershell
 Copy-Item api/.env.example api/.env
@@ -287,26 +286,34 @@ DB_HOST=mysql
 DB_PORT=3306
 DB_DATABASE=instagram
 DB_USERNAME=instagram
-DB_PASSWORD=instagram
+DB_PASSWORD=minha_senha_local
 ```
 
-### Atenção ao `APP_URL`
+A senha definida em:
 
-É importante utilizar:
+```env
+DB_PASSWORD
+```
+
+deve ser a mesma utilizada em:
+
+```env
+MYSQL_PASSWORD
+```
+
+no `.env` da raiz.
+
+## Atenção ao `APP_URL`
+
+Utilize:
 
 ```env
 APP_URL=http://localhost:8000
 ```
 
-e não apenas:
-
-```env
-APP_URL=http://localhost
-```
-
 O Laravel utiliza essa configuração para gerar URLs absolutas.
 
-Uma configuração incorreta pode fazer com que imagens de posts, vídeos e fotos de perfil sejam geradas com URLs inválidas.
+Se ela estiver configurada incorretamente, imagens, vídeos e fotos de perfil podem ser gerados com URLs inválidas.
 
 ---
 
@@ -314,11 +321,13 @@ Uma configuração incorreta pode fazer com que imagens de posts, vídeos e foto
 
 Crie:
 
+### Linux / macOS
+
 ```bash
 cp frontend/.env.example frontend/.env
 ```
 
-No PowerShell:
+### Windows PowerShell
 
 ```powershell
 Copy-Item frontend/.env.example frontend/.env
@@ -330,30 +339,18 @@ Configure:
 VITE_API_URL=http://localhost:8000/api
 ```
 
-O frontend utiliza essa variável através do Vite:
+Essa variável define o endereço utilizado pelo frontend para acessar a API.
 
-```js
-import.meta.env.VITE_API_URL
-```
-
-A URL da API, portanto, não fica fixa diretamente no código-fonte.
+Ela não é uma informação secreta, pois é utilizada pelo JavaScript executado no navegador.
 
 ---
 
 # Iniciando a aplicação
 
-Na raiz do projeto execute:
+Na raiz do projeto, execute:
 
 ```bash
 docker compose up -d --build
-```
-
-Esse comando irá construir e iniciar:
-
-```text
-frontend
-api
-mysql
 ```
 
 Confira o estado dos containers:
@@ -362,17 +359,21 @@ Confira o estado dos containers:
 docker compose ps
 ```
 
-O MySQL deve aparecer como saudável:
+Os serviços esperados são:
 
 ```text
-mysql    Up (healthy)
+frontend
+api
+mysql
 ```
+
+O MySQL deve aparecer como saudável.
 
 ---
 
-# Configurando o Laravel pela primeira vez
+# Configuração inicial do Laravel
 
-Depois que os containers estiverem ativos, gere a chave da aplicação:
+Depois que os containers estiverem ativos, execute:
 
 ```bash
 docker compose exec api php artisan key:generate
@@ -384,7 +385,7 @@ Limpe os caches:
 docker compose exec api php artisan optimize:clear
 ```
 
-Execute as migrations e os seeders:
+Execute migrations e seeders:
 
 ```bash
 docker compose exec api php artisan migrate --seed
@@ -396,13 +397,7 @@ Crie o link público do storage:
 docker compose exec api php artisan storage:link
 ```
 
-O `storage:link` é necessário para disponibilizar publicamente arquivos como:
-
-```text
-fotos de perfil
-imagens dos posts
-vídeos dos posts
-```
+O `storage:link` é necessário para disponibilizar publicamente arquivos como fotos de perfil, imagens e vídeos dos posts.
 
 ---
 
@@ -426,6 +421,12 @@ http://localhost:8000
 http://localhost:8000/api
 ```
 
+## Swagger UI
+
+```text
+http://localhost:8000/docs
+```
+
 ---
 
 # Banco de dados
@@ -439,12 +440,48 @@ Host: mysql
 Porta: 3306
 ```
 
-Por isso o Laravel possui:
+Por isso, no Laravel:
 
 ```env
 DB_HOST=mysql
 DB_PORT=3306
 ```
+
+O nome `mysql` funciona porque ele é o nome do serviço dentro da rede criada pelo Docker Compose.
+
+---
+
+# Acessando o banco pelo DBeaver
+
+A porta do MySQL é publicada somente no host local:
+
+```yaml
+ports:
+  - "127.0.0.1:3307:3306"
+```
+
+No DBeaver, utilize:
+
+```text
+Host: localhost
+Porta: 3307
+Database: valor de MYSQL_DATABASE
+Username: valor de MYSQL_USER
+Password: valor de MYSQL_PASSWORD
+```
+
+Fluxo:
+
+```text
+DBeaver
+localhost:3307
+       ↓
+Docker
+       ↓
+mysql:3306
+```
+
+Não utilize `mysql` como host no DBeaver. Esse nome existe somente dentro da rede Docker.
 
 ---
 
@@ -480,7 +517,7 @@ docker compose down -v
 
 remove também os volumes.
 
-> Atenção: esse comando apaga o banco de dados armazenado pelo Docker.
+> Atenção: `docker compose down -v` remove os dados do banco armazenados no volume.
 
 ---
 
@@ -494,19 +531,19 @@ volumes:
   - api_vendor:/var/www/html/vendor
 ```
 
-Isso significa que o código da pasta:
+Isso significa que a pasta local:
 
 ```text
 ./api
 ```
 
-é montado dentro do container em:
+é montada dentro do container em:
 
 ```text
 /var/www/html
 ```
 
-Portanto, mudanças em arquivos Laravel são refletidas imediatamente no container.
+Alterações feitas no código Laravel são refletidas imediatamente no container.
 
 Por exemplo:
 
@@ -514,25 +551,13 @@ Por exemplo:
 api/app/Services/PostService.php
 ```
 
-é visto pelo container como:
+é visto no container como:
 
 ```text
 /var/www/html/app/Services/PostService.php
 ```
 
-Assim, alterações comuns em:
-
-```text
-Controllers
-Services
-Models
-Resources
-Requests
-Policies
-Routes
-```
-
-normalmente não exigem reconstruir a imagem Docker.
+Mudanças comuns em Controllers, Services, Models, Resources, Requests, Policies e Routes normalmente não exigem rebuild da imagem.
 
 ---
 
@@ -594,32 +619,27 @@ Depois de alterar o frontend, reconstrua o serviço:
 docker compose up -d --build frontend
 ```
 
-Para desenvolvimento diretamente com o Vite, também é possível executar o frontend fora do container utilizando:
+Para desenvolvimento diretamente com Vite, também é possível executar o frontend fora do container:
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
 
-dentro da pasta:
-
-```text
-frontend/
-```
-
-Nesse caso, certifique-se de que:
+Nesse caso, mantenha:
 
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
 
-esteja configurado no `frontend/.env`.
+configurado em `frontend/.env`.
 
 ---
 
 # Autenticação
 
-A API utiliza **Laravel Sanctum**.
+A API utiliza Laravel Sanctum.
 
 Após um login válido, a API retorna um token.
 
@@ -630,8 +650,6 @@ Authorization: Bearer <token>
 ```
 
 O Axios adiciona o token automaticamente às requisições autenticadas.
-
-Exceto login e registro, as funcionalidades da aplicação exigem autenticação.
 
 ---
 
@@ -659,7 +677,7 @@ As relações de like e follow possuem restrições para impedir duplicidades.
 
 As mídias enviadas pela aplicação são armazenadas utilizando o filesystem do Laravel.
 
-Os arquivos públicos ficam associados a:
+Os arquivos públicos ficam em:
 
 ```text
 storage/app/public
@@ -671,13 +689,13 @@ e são disponibilizados através de:
 public/storage
 ```
 
-criado pelo comando:
+Esse link é criado com:
 
 ```bash
 docker compose exec api php artisan storage:link
 ```
 
-Caso as imagens não carreguem, confira:
+Caso imagens, vídeos ou fotos de perfil não carreguem, confira:
 
 ```env
 APP_URL=http://localhost:8000
@@ -694,33 +712,19 @@ docker compose exec api php artisan storage:link
 
 # Documentação da API
 
-A API possui documentação interativa utilizando Swagger UI.
+A API possui documentação interativa com Swagger UI.
 
-Após iniciar a aplicação, acesse:
+Acesse:
 
 ```text
 http://localhost:8000/docs
 ```
 
-A documentação apresenta os endpoints relacionados a:
-
-```text
-Autenticação
-Perfis
-Usuários
-Posts
-Likes
-Comentários
-Seguidores
-Busca
-Home
-```
+A documentação contém os endpoints relacionados a autenticação, usuários, perfis, posts, seguidores, curtidas, comentários, busca e feed.
 
 ---
 
 # Principais endpoints
-
-Alguns dos endpoints disponíveis são:
 
 ```text
 POST   /api/register
@@ -728,7 +732,6 @@ POST   /api/login
 POST   /api/logout
 
 GET    /api/me
-
 GET    /api/home
 
 GET    /api/profile
@@ -752,97 +755,95 @@ GET    /api/posts/{post}/comments
 POST   /api/posts/{post}/comments
 ```
 
-Para consultar detalhes dos parâmetros e respostas, utilize o Swagger UI.
+Para detalhes de parâmetros e respostas, consulte:
+
+```text
+http://localhost:8000/docs
+```
 
 ---
 
 # Comandos úteis
 
-## Subir os containers
+Subir os containers:
 
 ```bash
 docker compose up -d
 ```
 
-## Construir e subir
+Construir e subir:
 
 ```bash
 docker compose up -d --build
 ```
 
-## Ver containers
+Ver containers:
 
 ```bash
 docker compose ps
 ```
 
-## Ver logs
-
-```bash
-docker compose logs
-```
-
-## Logs em tempo real
+Ver logs:
 
 ```bash
 docker compose logs -f
 ```
 
-## Logs da API
+Logs da API:
 
 ```bash
 docker compose logs -f api
 ```
 
-## Logs do frontend
+Logs do frontend:
 
 ```bash
 docker compose logs -f frontend
 ```
 
-## Logs do MySQL
+Logs do MySQL:
 
 ```bash
 docker compose logs -f mysql
 ```
 
-## Entrar no container da API
+Entrar no container da API:
 
 ```bash
 docker compose exec api bash
 ```
 
-## Executar Artisan
+Executar comandos Artisan:
 
 ```bash
 docker compose exec api php artisan <comando>
 ```
 
-## Limpar cache do Laravel
+Limpar caches:
 
 ```bash
 docker compose exec api php artisan optimize:clear
 ```
 
-## Executar migrations
+Executar migrations:
 
 ```bash
 docker compose exec api php artisan migrate
 ```
 
-## Executar seeders
+Executar seeders:
 
 ```bash
 docker compose exec api php artisan db:seed
 ```
 
-## Parar os containers
+Parar containers:
 
 ```bash
 docker compose down
 ```
 
-## Parar e remover volumes
+Parar containers e remover volumes:
 
 ```bash
 docker compose down -v
@@ -850,27 +851,51 @@ docker compose down -v
 
 ---
 
-# Variáveis de ambiente
+# Variáveis de ambiente e segurança
 
 Os arquivos `.env` reais não devem ser versionados.
 
-O repositório disponibiliza arquivos `.env.example` contendo as variáveis necessárias para executar a aplicação sem expor segredos.
-
-Arquivos esperados:
+Arquivos que podem ser enviados ao Git:
 
 ```text
 .env.example
 api/.env.example
 frontend/.env.example
+compose.yaml
 ```
 
-Não coloque senhas reais, tokens ou outros segredos nesses arquivos.
+Arquivos que não devem ser enviados:
+
+```text
+.env
+api/.env
+frontend/.env
+```
+
+Os arquivos `.env.example` podem conter nomes de banco, usuário e placeholders, mas não devem conter senhas reais, tokens, chaves ou outros segredos.
+
+Exemplo:
+
+```env
+MYSQL_PASSWORD=change_me
+MYSQL_ROOT_PASSWORD=change_me
+```
+
+Nunca coloque no repositório:
+
+```env
+APP_KEY=chave_real
+DB_PASSWORD=senha_real
+MAIL_PASSWORD=senha_real
+AWS_SECRET_ACCESS_KEY=segredo_real
+GITHUB_TOKEN=token_real
+```
 
 ---
 
 # Testando uma instalação limpa
 
-Uma forma de verificar se o projeto pode ser executado em outra máquina é remover completamente os containers e volumes:
+Uma forma de verificar se o projeto pode ser executado em outra máquina é remover completamente containers e volumes:
 
 ```bash
 docker compose down -v
@@ -886,25 +911,26 @@ Execute novamente:
 
 ```bash
 docker compose exec api php artisan key:generate
+docker compose exec api php artisan optimize:clear
 docker compose exec api php artisan migrate --seed
 docker compose exec api php artisan storage:link
 ```
 
-E acesse:
+Acesse:
 
 ```text
 http://localhost:5173
 ```
 
-O projeto também foi testado a partir de um clone em outra máquina utilizando Docker.
+> Atenção: esse procedimento remove o banco de desenvolvimento existente.
 
 ---
 
 # Git
 
-Arquivos como estes não devem ser enviados ao repositório:
+Confirme que o `.gitignore` inclui pelo menos:
 
-```text
+```gitignore
 .env
 api/.env
 frontend/.env
@@ -914,31 +940,33 @@ frontend/node_modules/
 frontend/dist/
 ```
 
-Arquivos importantes que devem ser versionados:
+Não ignore:
 
 ```text
-compose.yaml
-
 .env.example
-
+api/.env.example
+frontend/.env.example
+compose.yaml
 api/Dockerfile
 api/Dockerfile.dev
-api/.dockerignore
-api/.env.example
-
 frontend/Dockerfile
-frontend/.dockerignore
-frontend/.env.example
-
 composer.lock
 package-lock.json
 ```
+
+Antes do push, você pode verificar se algum `.env` real está sendo versionado:
+
+```bash
+git ls-files | grep -E '(^|/)\.env$'
+```
+
+Se nenhum resultado aparecer, os `.env` reais não estão sendo rastreados pelo Git.
 
 ---
 
 # Objetivo acadêmico
 
-O projeto foi desenvolvido com o objetivo de aplicar conceitos de:
+O projeto foi desenvolvido para aplicar conceitos de:
 
 - APIs REST
 - autenticação e autorização
@@ -958,4 +986,4 @@ O projeto foi desenvolvido com o objetivo de aplicar conceitos de:
 
 # Licença
 
-Projeto desenvolvido para fins acadêmicos e educacionais.
+Projeto desenvolvido para fins educacionais.
